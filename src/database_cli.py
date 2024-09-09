@@ -24,11 +24,11 @@ class DatabaseCLI:
         if self.args.load:
             connection.load(self.args.load)
         elif self.args.list:
-            items = connection.list()
-            self._print_results(items)
+            results = connection.list()
+            self._print_results(results)
         elif self.args.search:
-            items = connection.search(self.args.search)
-            self._print_results(items)
+            results = connection.search(self.args.search)
+            self._print_results(results)
         elif self.args.delete:
             results = connection.delete(self.args.delete)
             print(f"Deleted record with id: {self.args.delete}" \
