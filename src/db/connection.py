@@ -9,50 +9,79 @@ class Connection:
         self.cursor = None
 
     def _connect(self):
-        self.connection = sqlite3.connect(self.database_name)
-        self.cursor = self.connection.cursor()
+        try:
+            self.connection = sqlite3.connect(self.database_name)
+            self.cursor = self.connection.cursor()
+        except sqlite3.Error as e:
+            print(f"Error connecting to SQLite database: {e}")
 
     def _close(self):
-        self.connection.close()
+        try:
+            self.connection.close()
+        except sqlite3.Error as e:
+            print(f"Error closing SQLite database connection: {e}")
 
     def _create_table(self, table_name):
-        self.cursor.execute(f"DROP TABLE IF EXISTS {table_name};")
-        self.cursor.execute(f"""
-            CREATE TABLE {table_name} (
-            Identifier INTEGER,
-            Lastname TEXT NOT NULL,
-            Firstname TEXT NOT NULL,
-            Email TEXT);
-        """)
+        try:
+            self.cursor.execute(f"DROP TABLE IF EXISTS {table_name};")
+            self.cursor.execute(f"""
+                CREATE TABLE {table_name} (
+                Identifier INTEGER,
+                Lastname TEXT NOT NULL,
+                Firstname TEXT NOT NULL,
+                Email TEXT);
+            """)
+        except sqlite3.Error as e:
+            print(f"Error creating table: {e}")
 
     def load(self, csv_filename, table_name="data"):
         self._connect()
 
-        with open(csv_filename, 'r', encoding='utf-8') as file:
-            reader = csv.reader(file)
-            next(reader)
-            self._create_table(table_name)
-            for row in reader:
-                self.cursor.execute(f"""
-                    INSERT INTO {table_name} (Identifier, Lastname, Firstname, Email)
-                    VALUES (?, ?, ?, ?)", {row});
-                """)
+        try:
+            with open(csv_filename, 'r', encoding='utf-8') as file:
+                reader = csv.reader(file)
+                next(reader)
+                self._create_table(table_name)
+                for row in reader:
+                    self.cursor.execute(f"""
+                        INSERT INTO {table_name} (Identifier, Lastname, Firstname, Email)
+                        VALUES (?, ?, ?, ?);
+                    """, row)
 
-        self.connection.commit()
+            self.connection.commit()
+        except FileNotFoundError:
+            print(f"File not found: {csv_filename}")
+        except csv.Error as e:
+            print(f"Error reading CSV file: {e}")
+        except sqlite3.Error as e:
+            print(f"Error inserting data into SQLite database: {e}")
+
         self._close()
 
     def list(self, table_name="data"):
+        result = None
         self._connect()
-        self.cursor.execute(f"SELECT * FROM {table_name}")
-        result = self.cursor.fetchall()
+
+        try:
+            self.cursor.execute(f"SELECT * FROM {table_name}")
+            result = self.cursor.fetchall()
+        except sqlite3.Error as e:
+            print(f"Error fetching data from SQLite database: {e}")
+
         self._close()
 
         return result
 
     def search(self, lastname, table_name="data"):
+        result = None
         self._connect()
-        self.cursor.execute(f"SELECT * FROM {table_name} WHERE Lastname = ?", (lastname,))
-        result = self.cursor.fetchall()
+
+        try:
+            self.cursor.execute(f"SELECT * FROM {table_name} WHERE Lastname = ?", (lastname,))
+            result = self.cursor.fetchall()
+        except sqlite3.Error as e:
+            print(f"Error searching SQLite database: {e}")
+
         self._close()
 
         return result
