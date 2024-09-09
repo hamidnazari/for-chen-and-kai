@@ -51,6 +51,15 @@ class DatabaseCLI:
 
 
         elif self.args.insert:
-            pass
+            values = self.args.insert.split(',')
+            results = connection.insert(values)
+
+            if results:
+                sys.stdout.write(f"Inserted record with values: {values}")
+                sys.stdout.write("\n")
+            else:
+                sys.stderr.write(f"Could not insert record with values: {values}")
+                sys.stderr.write("\n")
+
         else:
             self.parser.print_help()

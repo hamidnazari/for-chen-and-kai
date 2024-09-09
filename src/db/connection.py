@@ -98,3 +98,19 @@ class Connection:
 
         self._close()
         return True
+
+    def insert(self, values, table_name="data"):
+        self._connect()
+
+        try:
+            self.cursor.execute(f"""
+                INSERT INTO {table_name} (Identifier, Lastname, Firstname, Email)
+                VALUES (?, ?, ?, ?);
+            """, values)
+            self.connection.commit()
+        except sqlite3.Error as e:
+            sys.stderr.write(f"Error inserting into the SQLite database: {e}")
+            return False
+
+        self._close()
+        return True
