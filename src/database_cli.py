@@ -30,7 +30,10 @@ class DatabaseCLI:
             items = connection.search(self.args.search)
             self._print_results(items)
         elif self.args.delete:
-            pass
+            results = connection.delete(self.args.delete)
+            print(f"Deleted record with id: {self.args.delete}" \
+                  if results else \
+                "Could not delete record with id: {self.args.delete}")
         elif self.args.insert:
             pass
         else:

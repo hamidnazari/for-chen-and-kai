@@ -56,3 +56,16 @@ class Connection:
         self._close()
 
         return result
+
+    def delete(self, identifier, table_name="data") -> bool:
+        self._connect()
+
+        try:
+            self.cursor.execute(f"DELETE FROM {table_name} WHERE Identifier = ?", (identifier,))
+            self.connection.commit()
+        except sqlite3.Error as e:
+            print(f"Error deleting from SQLite database: {e}")
+            return False
+
+        self._close()
+        return True
