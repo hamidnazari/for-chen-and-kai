@@ -5,6 +5,8 @@ import csv
 class Connection:
     def __init__(self, database_name):
         self.database_name = database_name
+        self.connection = None
+        self.cursor = None
 
     def _connect(self):
         self.connection = sqlite3.connect(self.database_name)
@@ -20,18 +22,37 @@ class Connection:
             Identifier INTEGER,
             Lastname TEXT NOT NULL,
             Firstname TEXT NOT NULL,
-            Email TEXT
-        );""")
+            Email TEXT);
+        """)
 
     def load(self, csv_filename, table_name="data"):
         self._connect()
 
-        with open(csv_filename, 'r') as file:
+        with open(csv_filename, 'r', encoding='utf-8') as file:
             reader = csv.reader(file)
             next(reader)
             self._create_table(table_name)
             for row in reader:
-                self.cursor.execute(f"INSERT INTO {table_name} (Identifier, Lastname, Firstname, Email) VALUES (?, ?, ?, ?)", row)
+                self.cursor.execute(f"""
+                    INSERT INTO {table_name} (Identifier, Lastname, Firstname, Email)
+                    VALUES (?, ?, ?, ?)", {row});
+                """)
 
         self.connection.commit()
         self._close()
+
+    def list(self, table_name="data"):
+        self._connect()
+        self.cursor.execute(f"SELECT * FROM {table_name}")
+        result = self.cursor.fetchall()
+        self._close()
+
+        return result
+
+    def search(self, lastname, table_name="data"):
+        self._connect()
+        self.cursor.execute(f"SELECT * FROM {table_name} WHERE Lastname = ?", (lastname,))
+        result = self.cursor.fetchall()
+        self._close()
+
+        return result
