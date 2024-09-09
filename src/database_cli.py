@@ -7,11 +7,12 @@ class DatabaseCLI:
         self.parser = argparse.ArgumentParser(description="SQLite Database CLI.")
         self.parser.add_argument("database", help="SQLite database file name")
         self.parser.add_argument("-L", "--load", help="Load CSV dataset into the database")
-        self.parser.add_argument("-l", "--list", action="store_true", help="List the data stored in the database")
+        self.parser.add_argument("-l", "--list", action="store_true",
+                                 help="List the data stored in the database")
         self.parser.add_argument("-s", "--search", help="Lookup a record by value")
         self.parser.add_argument("-d", "--delete", help="Delete a record by identifier")
         self.parser.add_argument("-i", "--insert", nargs=2, metavar=("TABLE", "VALUES"),
-                                 help= "Insert a new entry by passing a comma-separated list of values")
+                                 help= "Insert a comma-separated list of values into the database")
         self.args = self.parser.parse_args()
 
     def _print_results(self, results):

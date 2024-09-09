@@ -4,9 +4,10 @@ CSV_FILENAME:=contacts.csv
 
 venv:
 	@python3 -m venv ./venv
+	@source ./venv/bin/activate
 
-deps:
-	@pip3 install -r requirements.txt
+deps: venv
+	@pip3 install -Ur requirements.txt
 
 test: deps
 	@python3 -m pytest
