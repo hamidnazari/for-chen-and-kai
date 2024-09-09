@@ -31,7 +31,7 @@ class Connection:
             next(reader)
             self._create_table(table_name)
             for row in reader:
-                self.cursor.execute("INSERT INTO contacts (Identifier, Lastname, Firstname, Email) VALUES (?, ?, ?, ?)", row)
+                self.cursor.execute(f"INSERT INTO {table_name} (Identifier, Lastname, Firstname, Email) VALUES (?, ?, ?, ?)", row)
 
         self.connection.commit()
         self._close()
