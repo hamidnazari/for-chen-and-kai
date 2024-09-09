@@ -1,6 +1,6 @@
 import sqlite3
 import csv
-
+import sys
 
 class Connection:
     def __init__(self, database_name):
@@ -13,13 +13,13 @@ class Connection:
             self.connection = sqlite3.connect(self.database_name)
             self.cursor = self.connection.cursor()
         except sqlite3.Error as e:
-            print(f"Error connecting to SQLite database: {e}")
+            sys.stderr.write(f"Error connecting to SQLite database: {e}")
 
     def _close(self):
         try:
             self.connection.close()
         except sqlite3.Error as e:
-            print(f"Error closing SQLite database connection: {e}")
+            sys.stderr.write(f"Error closing SQLite database connection: {e}")
 
     def _create_table(self, table_name):
         try:
@@ -32,7 +32,7 @@ class Connection:
                 Email TEXT);
             """)
         except sqlite3.Error as e:
-            print(f"Error creating table: {e}")
+            sys.stderr.write(f"Error creating table: {e}")
 
     def load(self, csv_filename, table_name="data"):
         self._connect()
@@ -50,11 +50,11 @@ class Connection:
 
             self.connection.commit()
         except FileNotFoundError:
-            print(f"File not found: {csv_filename}")
+            sys.stderr.write(f"File not found: {csv_filename}")
         except csv.Error as e:
-            print(f"Error reading CSV file: {e}")
+            sys.stderr.write(f"Error reading CSV file: {e}")
         except sqlite3.Error as e:
-            print(f"Error inserting data into SQLite database: {e}")
+            sys.stderr.write(f"Error inserting data into SQLite database: {e}")
 
         self._close()
 
@@ -66,7 +66,7 @@ class Connection:
             self.cursor.execute(f"SELECT * FROM {table_name}")
             result = self.cursor.fetchall()
         except sqlite3.Error as e:
-            print(f"Error fetching data from SQLite database: {e}")
+            sys.stderr.write(f"Error fetching data from SQLite database: {e}")
 
         self._close()
 
@@ -80,7 +80,7 @@ class Connection:
             self.cursor.execute(f"SELECT * FROM {table_name} WHERE Lastname = ?", (lastname,))
             result = self.cursor.fetchall()
         except sqlite3.Error as e:
-            print(f"Error searching SQLite database: {e}")
+            sys.stderr.write(f"Error searching SQLite database: {e}")
 
         self._close()
 
@@ -93,7 +93,7 @@ class Connection:
             self.cursor.execute(f"DELETE FROM {table_name} WHERE Identifier = ?", (identifier,))
             self.connection.commit()
         except sqlite3.Error as e:
-            print(f"Error deleting from SQLite database: {e}")
+            sys.stderr.write(f"Error deleting from SQLite database: {e}")
             return False
 
         self._close()
