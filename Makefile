@@ -9,9 +9,9 @@ endef
 
 venv:
 	@python3 -m venv ./venv
-	@source ./venv/bin/activate
 
 deps: venv
+	@bash ./venv/bin/activate
 	@pip3 install -Ur requirements.txt
 
 test: deps
