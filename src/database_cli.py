@@ -1,9 +1,10 @@
+import server
+from db.connection import Connection
+
 import os
 import sys
 import argparse
 
-import server
-from db.connection import Connection
 
 class DatabaseCLI:
     def __init__(self):
