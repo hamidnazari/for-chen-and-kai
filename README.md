@@ -2,6 +2,21 @@
 
 [![Quality Assurance](https://github.com/hamidnazari/for-chen-and-kai/actions/workflows/qa.yml/badge.svg)](https://github.com/hamidnazari/for-chen-and-kai/actions/workflows/qa.yml)
 
+## The Application
+
+```sh
+$ ./src/cli.py
+usage: cli.py [-h] [-L LOAD] [-l] [-s SEARCH] [-d DELETE] [-i INSERT] [-S] database
+cli.py: error: the following arguments are required: database
+
+$ ./src/cli.py data/contacs.db --load data/contacts.csv
+$ ./src/cli.py data/contacs.db --list
+$ ./src/cli.py data/contacs.db --search Taylor
+$ ./src/cli.py data/contacs.db --delete 8196
+```
+
+## The Accessories
+
 The following Make targets are here to help:
 
 - `make demo` to see a demo of the projects capabilities
