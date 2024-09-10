@@ -49,12 +49,17 @@ class Connection:
                     """, row)
 
             self.connection.commit()
-        except FileNotFoundError:
+        except FileNotFoundError as e:
             sys.stderr.write(f"File not found: {csv_filename}\n")
+            raise e
+
         except csv.Error as e:
             sys.stderr.write(f"Error reading CSV file: {e}\n")
+            raise e
+
         except sqlite3.Error as e:
             sys.stderr.write(f"Error inserting data into SQLite database: {e}\n")
+            raise e
 
         self._close()
 
