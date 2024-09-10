@@ -2,6 +2,7 @@ import os
 import sys
 import argparse
 
+import server
 from db.connection import Connection
 
 class DatabaseCLI:
@@ -15,6 +16,8 @@ class DatabaseCLI:
         self.parser.add_argument("-d", "--delete", help="Delete a record by identifier")
         self.parser.add_argument("-i", "--insert",
                                  help= "Insert a comma-separated list of values into the database")
+        self.parser.add_argument("-S", "--server", action="store_true",
+                                 help="Serve an API with /list and /search?lastname= endpoints")
         self.args = self.parser.parse_args()
 
     def _print_results(self, results):
@@ -60,6 +63,9 @@ class DatabaseCLI:
             else:
                 sys.stderr.write(f"Could not insert record with values: {values}")
                 sys.stderr.write("\n")
+
+        elif self.args.server:
+            server.run(connection)
 
         else:
             self.parser.print_help()
