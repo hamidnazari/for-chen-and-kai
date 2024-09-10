@@ -31,11 +31,18 @@ class DatabaseCLI:
                     sys.stdout = devnull
                 break
 
-    def run(self):
+    def run(self) -> int:
         connection = Connection(self.args.database)
 
         if self.args.load:
-            connection.load(self.args.load)
+            try:
+                connection.load(self.args.load)
+            # pylint: disable=broad-except
+            except Exception as e:
+                sys.stderr.write(f"Could not load dataset: {e}")
+                return 1
+
+            return 0
 
         elif self.args.list:
             results = connection.list()
@@ -51,9 +58,11 @@ class DatabaseCLI:
             if results:
                 sys.stdout.write(f"Deleted record with id: {self.args.delete}")
                 sys.stdout.write("\n")
+                return 0
             else:
                 sys.stderr.write(f"Could not delete record with id: {self.args.delete}")
                 sys.stderr.write("\n")
+                return 1
 
         elif self.args.insert:
             values = self.args.insert.split(',')
@@ -62,12 +71,16 @@ class DatabaseCLI:
             if results:
                 sys.stdout.write(f"Inserted record with values: {values}")
                 sys.stdout.write("\n")
+                return 0
             else:
                 sys.stderr.write(f"Could not insert record with values: {values}")
                 sys.stderr.write("\n")
+                return 1
 
         elif self.args.server:
             server.run(connection)
 
         else:
             self.parser.print_help()
+            return 1
+
