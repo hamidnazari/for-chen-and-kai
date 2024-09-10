@@ -1,5 +1,7 @@
-DB_FILENAME:=contacts.db
-CSV_FILENAME:=contacts.csv
+DB_FILENAME:=data/contacts.db
+CSV_FILENAME:=data/contacts.csv
+
+export GIT_COMMIT_HASH=$(shell git rev-parse --short HEAD)
 
 define echo_info
 	@echo "\033[33m$(1)\033[0m"
@@ -17,6 +19,15 @@ test: deps
 
 lint: deps
 	@pylint src/
+
+image:
+	@docker compose build
+
+run:
+	@docker compose up -d --build
+
+stop:
+	@docker compose down
 
 demo: deps
 	$(call echo_info,Demonstrating capabilities of the SQLite3 CLI.)
@@ -44,9 +55,13 @@ demo: deps
 	python3 src/cli.py $(DB_FILENAME) --search Doe
 
 	@echo
-	$(call echo_info,Launching API server.)
-	python3 src/cli.py $(DB_FILENAME) --server &
-	sleep 2
+	$(call echo_info,Launching API server Docker container.)
+	@make run
+	@sleep 3
+
+	@echo
+	$(call echo_info,Looking up server /info endpoint.)
+	curl "http://localhost:8080/info"
 
 	@echo
 	$(call echo_info,Searching for lastname Doe via the API.)
@@ -54,7 +69,7 @@ demo: deps
 
 	@echo
 	@echo
-	$(call echo_info,Terminating this and all subprocesses.)
-	@trap 'kill 0' EXIT;
+	$(call echo_info,Stopping all Docker services.)
+	@make stop
 
-.PHONE: venv deps test lint demo
+.PHONE: venv deps test lint demo image run stop

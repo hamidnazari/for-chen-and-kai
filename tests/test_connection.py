@@ -11,7 +11,7 @@ def db_connection():
 
 
 def test_load_csv(db_connection):
-    test_csv = 'contacts.csv'
+    test_csv = 'data/contacts.csv'
     db_connection.load(test_csv)
 
     result = db_connection.list()

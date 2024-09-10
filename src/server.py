@@ -1,3 +1,4 @@
+import os
 import sys
 import json
 from http.server import HTTPServer, BaseHTTPRequestHandler
@@ -20,11 +21,19 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         if self.path == '/list':
             data = self.db_connection.list()
             self._write_response(data)
-        if  self.path.startswith('/search'):
+
+        elif self.path.startswith('/search'):
             query_components = parse_qs(urlparse(self.path).query)
             lastname = query_components.get('lastname', [''])[0]
             data = self.db_connection.search(lastname)
             self._write_response(data)
+
+        elif self.path == '/info':
+            data = {
+                "git_commit_hash": os.environ.get('GIT_COMMIT_HASH', 'hash_not_set'),
+            }
+            self._write_response(data)
+
         else:
             self.send_response(404)
             self.end_headers()

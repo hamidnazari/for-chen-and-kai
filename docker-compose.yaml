@@ -1,0 +1,13 @@
+services:
+  api:
+    build:
+      context: .
+      args:
+        - GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
+      labels:
+        - "git.commit.sha=${GIT_COMMIT_HASH}"
+    volumes:
+      - ./data:/data
+    ports:
+      - "8080:8080"
+    command: /data/contacts.db
