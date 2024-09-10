@@ -36,12 +36,15 @@ class DatabaseCLI:
 
         if self.args.load:
             connection.load(self.args.load)
+
         elif self.args.list:
             results = connection.list()
             self._print_results(results)
+
         elif self.args.search:
             results = connection.search(self.args.search)
             self._print_results(results)
+
         elif self.args.delete:
             results = connection.delete(self.args.delete)
 
@@ -51,7 +54,6 @@ class DatabaseCLI:
             else:
                 sys.stderr.write(f"Could not delete record with id: {self.args.delete}")
                 sys.stderr.write("\n")
-
 
         elif self.args.insert:
             values = self.args.insert.split(',')
