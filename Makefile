@@ -40,8 +40,21 @@ demo: deps
 	python3 src/cli.py $(DB_FILENAME) --insert '9999,Doe,John,john.doe@example.com'
 
 	@echo
-	$(call echo_info,Searching for records with Lastname Doe.)
+	$(call echo_info,Searching for records with lastname Doe.)
 	python3 src/cli.py $(DB_FILENAME) --search Doe
 
+	@echo
+	$(call echo_info,Launching API server.)
+	python3 src/cli.py $(DB_FILENAME) --server &
+	sleep 2
+
+	@echo
+	$(call echo_info,Searching for lastname Doe via the API.)
+	curl "http://localhost:8080/search?lastname=Doe"
+
+	@echo
+	@echo
+	$(call echo_info,Terminating this and all subprocesses.)
+	@trap 'kill 0' EXIT;
 
 .PHONE: venv deps test lint demo
